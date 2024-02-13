@@ -113,6 +113,7 @@ cdef extern from "enet/enet.h":
         enet_uint16 outgoingUnsequencedGroup
         enet_uint32 unsequencedWindow
         enet_uint32 eventData
+        enet_uint16 flags
 
     ctypedef struct ENetHost:
         ENetSocket socket
@@ -143,6 +144,9 @@ cdef extern from "enet/enet.h":
         enet_uint8 channelID
         enet_uint32 data
         ENetPacket *packet
+
+    ctypedef enum ENetPeerFlag:
+        ENET_PEER_FLAG_NEEDS_DISPATCH = (1 << 0)
 
     # Global functions
     int enet_initialize()
@@ -778,6 +782,11 @@ cdef class Peer:
         def __get__(self):
             if self.check_valid():
                 return self._enet_peer.outgoingReliableSequenceNumber
+
+    property needsDispatch:
+        def __get__(self):
+            if self.check_valid():
+                return int(bool(self._enet_peer.flags & ENET_PEER_FLAG_NEEDS_DISPATCH))
 
     property incomingUnsequencedGroup:
         def __get__(self):
