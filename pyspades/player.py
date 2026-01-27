@@ -654,24 +654,28 @@ class ServerConnection(BaseConnection):
         if value.startswith('/'):
             self.on_command(*parse_command(value[1:]))
         else:
-            global_message = contained.chat_type == CHAT_ALL
-            result = self.on_chat(value, global_message)
+            is_global_message = contained.chat_type == CHAT_ALL
+
+            result = self.on_chat(value, is_global_message)
+
             if result == False:
                 return
             elif result is not None:
                 value = result
-            contained.chat_type = CHAT_ALL if global_message else CHAT_TEAM
-            contained.value = value
+
+            contained.chat_type = CHAT_ALL if is_global_message else CHAT_TEAM
+            contained.value     = value
             contained.player_id = self.player_id
-            if global_message:
-                team = None
-            else:
-                team = self.team
+
+            team = None if is_global_message else self.team
+
             for player in self.protocol.players.values():
-                if not player.deaf:
-                    if team is None or team is player.team:
-                        player.send_contained(contained)
-            self.on_chat_sent(value, global_message)
+                if player.on_chat_delivered(self, value, team) is False:
+                    continue
+
+                player.send_contained(contained)
+
+            self.on_chat_sent(value, is_global_message)
 
     @register_packet_handler(loaders.FogColor)
     def on_fog_color_recieved(self, contained):
@@ -1328,11 +1332,18 @@ class ServerConnection(BaseConnection):
     def on_spawn_location(self, pos: Tuple[float, float, float]) -> None:
         pass
 
-    def on_chat(self, value, global_message):
+    def on_chat(self, value : str, is_global_message : bool) -> bool:
         pass
 
-    def on_chat_sent(self, value: str, global_message: bool) -> None:
+    def on_chat_sent(self, value : str, is_global_message : bool) -> None:
         pass
+
+    def on_chat_delivered(self, player, value : str, team) -> bool:
+        if self.deaf:
+            return False
+
+        if team is not None and self.team is not team:
+            return False
 
     def on_command(self, command, parameters):
         pass
