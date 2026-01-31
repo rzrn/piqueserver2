@@ -670,7 +670,7 @@ class ServerConnection(BaseConnection):
             team = None if is_global_message else self.team
 
             for player in self.protocol.players.values():
-                if player.on_chat_delivered(self, value, team) is False:
+                if player.on_chat_delivered(self, value, is_global_message) is False:
                     continue
 
                 player.send_contained(contained)
@@ -1338,11 +1338,11 @@ class ServerConnection(BaseConnection):
     def on_chat_sent(self, value : str, is_global_message : bool) -> None:
         pass
 
-    def on_chat_delivered(self, player, value : str, team) -> bool:
+    def on_chat_delivered(self, player, value : str, is_global_message : bool) -> bool:
         if self.deaf:
             return False
 
-        if team is not None and self.team is not team:
+        if is_global_message is False and self.team is not player.team:
             return False
 
     def on_command(self, command, parameters):
