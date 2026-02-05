@@ -61,6 +61,8 @@ def parse_command(value: str) -> Tuple[str, Sequence[str]]:
 
 
 class ServerConnection(BaseConnection):
+    world_object_class = world.Character
+
     address = None  # Tuple[int, int]
     player_id = None
     map_packets_sent = 0
@@ -87,7 +89,7 @@ class ServerConnection(BaseConnection):
     rubberband_distance = 10
     rapid_hack_detect = False
     timers = None
-    world_object = None  # type: world.Character
+    world_object = None
     last_block = None
     map_data = None
     last_position_update = None
@@ -877,7 +879,8 @@ class ServerConnection(BaseConnection):
             else:
                 position = Vertex3(x, y, z)
                 self.world_object = self.protocol.world.create_object(
-                    world.Character, position, None, self._on_fall)
+                    self.world_object_class, position, None, self._on_fall
+                )
             self.world_object.dead = False
             self.tool = WEAPON_TOOL
             self.refill(True)
