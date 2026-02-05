@@ -15,71 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with pyspades.  If not, see <http://www.gnu.org/licenses/>.
 
-import math
-import time
-from pyspades.vxl cimport VXLData, MapData
-from pyspades.common cimport Vertex3, create_proxy_vector
+from pyspades.common cimport create_proxy_vector
 from libc.math cimport sqrt, sin, cos, acos, fabs
 from pyspades.constants import TORSO, HEAD, ARMS, LEGS, MELEE
 
-cdef extern from "common_c.h":
-    struct LongVector:
-        int x, y, z
-    struct Vector:
-        float x, y, z
-
-cdef extern from "world_c.cpp":
-    enum:
-        CUBE_ARRAY_LENGTH
-    int c_validate_hit "validate_hit" (
-        float shooter_x, float shooter_y, float shooter_z,
-        float orientation_x, float orientation_y, float orientation_z,
-        float victim_x, float victim_y, float victim_z, float aim_tolerance, float dist_tolerance)
-    int c_can_see "can_see" (MapData * map, float x0, float y0, float z0,
-        float x1, float y1, float z1)
-    int c_cast_ray "cast_ray" (MapData * map, float x0, float y0, float z0,
-        float x1, float y1, float z1, float length, long* x, long* y, long* z)
-    size_t cube_line_c "cube_line"(int, int, int, int, int, int, LongVector *)
-    void set_globals(MapData * map, float total_time, float dt)
-    struct PlayerType:
-        Vector p, e, v, s, h, f
-        int mf, mb, ml, mr
-        int jump, crouch, sneak
-        int airborne, wade, alive, sprint
-        int primary_fire, secondary_fire, weapon
-
-    struct GrenadeType:
-        Vector p, v
-    PlayerType * create_player()
-    void destroy_player(PlayerType * player)
-    void destroy_grenade(GrenadeType * player)
-    void update_timer(float value, float dt)
-    void reorient_player(PlayerType * p, Vector * vector)
-    int move_player(PlayerType * p)
-    int try_uncrouch(PlayerType * p)
-    GrenadeType * create_grenade(Vector * p, Vector * v)
-    int move_grenade(GrenadeType * grenade)
-
-from libc.math cimport sqrt
-
-cdef inline bint can_see(VXLData map, float x1, float y1, float z1,
-    float x2, float y2, float z2):
-    return c_can_see(map.map, x1, y1, z1, x2, y2, z2)
-
-cdef inline bint cast_ray(VXLData map, float x1, float y1, float z1,
-    float x2, float y2, float z2, float length, long* x, long* y, long* z):
-    return c_cast_ray(map.map, x1, y1, z1, x2, y2, z2, length, x, y, z)
-
-cdef class Object
-cdef class World
-cdef class Grenade
-cdef class Character
+import math
+import time
 
 cdef class Object:
     """an object in present in the World"""
-    cdef public:
-        object name
-        World world
 
     def __init__(self, world, *arg, **kw):
         self.world = world
@@ -105,11 +49,6 @@ cdef class Object:
 cdef class Character(Object):
     """Represents the position, orientation and velocity of the player object in
     the world"""
-    cdef:
-        PlayerType * player
-    cdef public:
-        Vertex3 position, orientation, velocity
-        object fall_callback
 
     def initialize(self, Vertex3 position, Vertex3 orientation,
                    fall_callback = None):
@@ -316,13 +255,6 @@ cdef class Character(Object):
         return f"Character(pos={self.position}, orientation={self.orientation})"
 
 cdef class Grenade(Object):
-    cdef public:
-        Vertex3 position, velocity
-        float fuse
-        object callback
-        object team
-    cdef GrenadeType * grenade
-
     def initialize(self, double fuse, Vertex3 position, Vertex3 orientation,
                    Vertex3 velocity, callback = None):
         self.name = 'grenade'
@@ -400,10 +332,6 @@ cdef class Grenade(Object):
 
 cdef class World(object):
     """controls the map of the World and the Objects inside of it"""
-    cdef public:
-        VXLData map
-        list objects
-        float time
 
     def __init__(self):
         self.objects = []
