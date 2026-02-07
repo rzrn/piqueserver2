@@ -43,6 +43,7 @@ cdef extern from "world_c.cpp":
         int jump, crouch, sneak
         int airborne, wade, alive, sprint
         int primary_fire, secondary_fire, weapon
+        float lastclimb
 
     struct GrenadeType:
         Vector p, v
