@@ -603,7 +603,25 @@ class FeatureProtocol(ServerProtocol):
         self.motd = self.format_lines(motd_option.get())
         self.help = self.format_lines(help_option.get())
         self.tips = self.format_lines(tips_option.get())
-        self.rules = self.format_lines(rules_option.get())
+
+        rules_option_value = rules_option.get()
+
+        if isinstance(rules_option_value, list):
+            rules_list = rules_option_value
+        elif isinstance(rules_option_value, str):
+            with open(rules_option_value, 'r') as file:
+                rules_list = file.read().splitlines()
+        else:
+            rules_list = None
+
+            log.error(
+                "'rules' config option is expected to be str or list, {} found".format(
+                    type(rules_option_value).__name__
+                )
+            )
+
+        self.rules = self.format_lines(rules_list)
+
         self.master_pool.update_server()
 
     def format(self, value: str, extra: Optional[Dict[str, str]] = None) -> str:
