@@ -425,8 +425,11 @@ class ServerProtocol(BaseProtocol):
                 while map_obj.get_solid(entity.x, entity.y, entity.z) is False:
                     moved = True
                     entity.z += 1
+
             if moved or self.on_update_entity(entity):
                 entity.update()
+
+                self.on_entity_updated(entity)
 
     def broadcast_chat(self, message, global_message=None, sender=None,
                        team=None):
@@ -509,4 +512,7 @@ class ServerProtocol(BaseProtocol):
         pass
 
     def on_update_entity(self, entity):
+        pass
+
+    def on_entity_updated(self, entity):
         pass

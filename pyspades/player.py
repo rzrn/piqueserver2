@@ -914,6 +914,7 @@ class ServerConnection(BaseConnection):
         intel_pickup = loaders.IntelPickup()
         intel_pickup.player_id = self.player_id
         self.protocol.broadcast_contained(intel_pickup, save=True)
+        self.protocol.on_entity_updated(flag)
 
     def capture_flag(self):
         other_team = self.team.other
@@ -935,6 +936,7 @@ class ServerConnection(BaseConnection):
             self.protocol.broadcast_contained(intel_capture, save=True)
             flag = other_team.set_flag()
             flag.update()
+            self.protocol.on_entity_updated(flag)
 
     def drop_flag(self) -> None:
         protocol = self.protocol
@@ -960,7 +962,10 @@ class ServerConnection(BaseConnection):
                 intel_drop.y = flag.y
                 intel_drop.z = flag.z
                 self.protocol.broadcast_contained(intel_drop, save=True)
+
                 self.on_flag_drop()
+                self.protocol.on_entity_updated(flag)
+
                 break
         elif game_mode == TC_MODE:
             for entity in protocol.entities:
