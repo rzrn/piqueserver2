@@ -69,7 +69,11 @@ class Map:
         # we want to count how long a map load or generate takes
         start_time = time.monotonic()
         if self.gen_script:
-            seed = rot_info.get_seed()
+            if map_on_seed_generation := getattr(self.info, 'on_seed_generation', None):
+                seed = map_on_seed_generation(rot_info)
+            else:
+                seed = rot_info.get_seed()
+
             self.name = '{} #{}'.format(rot_info.name, seed)
             log.info("Generating map '{mapname}'...", mapname=self.name)
             random.seed(seed)
