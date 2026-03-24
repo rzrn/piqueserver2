@@ -1024,7 +1024,7 @@ class ServerConnection(BaseConnection):
     def set_hp(self, value: Union[int, float], hit_by: Optional['ServerConnection'] = None, kill_type: int = WEAPON_KILL,
                hit_indicator: Optional[Tuple[float, float, float]] = None, grenade: Optional[world.Grenade] = None) -> None:
         value = int(value)
-        self.hp = max(0, min(100, value))
+        self.hp = max(0, min(255, value))
         if self.hp <= 0:
             self.kill(hit_by, kill_type, grenade)
             return
