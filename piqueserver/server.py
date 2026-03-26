@@ -548,7 +548,7 @@ class FeatureProtocol(ServerProtocol):
         if self.map_info:
             self.on_map_leave()
         self.map_info = map_info
-        self.max_score = self.map_info.cap_limit or self.default_cap_limit
+        self.max_score = self.default_cap_limit if self.map_info.cap_limit is None else self.map_info.cap_limit
         self.set_map(self.map_info.data)
         self.set_time_limit(self.map_info.time_limit)
         self.update_format()
