@@ -189,7 +189,7 @@ def ensure_dir_exists(filename: str) -> None:
 
 def random_choice_cycle(choices):
     while True:
-        yield random.choice(choices)
+        yield from random.sample(choices, k = len(choices))
 
 
 class FeatureTeam(Team):
