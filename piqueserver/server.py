@@ -56,7 +56,8 @@ from piqueserver.scheduler import Scheduler
 from piqueserver.utils import as_deferred, EndCall
 from piqueserver.bansubscribe import bans_config_urls
 from pyspades.bytes import NoDataLeft
-from pyspades.constants import CTF_MODE, ERROR_SHUTDOWN, TC_MODE, EXTENSION_CHATTYPE
+from pyspades.constants import (CTF_MODE, ERROR_SHUTDOWN, TC_MODE,
+                                EXTENSION_CHATTYPE, EXTENSION_KICKREASON)
 from pyspades.master import MAX_SERVER_NAME_SIZE
 from pyspades.server import ServerProtocol, Team
 from pyspades.tools import make_server_identifier
@@ -275,7 +276,10 @@ class FeatureProtocol(ServerProtocol):
         self.win_count = itertools.count(1)
         self.bans = NetworkDict()
 
-        self.available_proto_extensions = [(EXTENSION_CHATTYPE, 1)]
+        self.available_proto_extensions = [
+            (EXTENSION_CHATTYPE, 1),
+            (EXTENSION_KICKREASON, 1),
+        ]
 
         # attempt to load a saved bans list
         try:

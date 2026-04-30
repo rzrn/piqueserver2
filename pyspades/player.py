@@ -1266,6 +1266,20 @@ class ServerConnection(BaseConnection):
     def send_data(self, data):
         self.protocol.transport.write(data, self.address)
 
+    def disconnect(self, data: int = 0, reason: Optional[str] = None) -> None:
+        if reason:
+            self._send_kick_reason(reason)
+        super().disconnect(data)
+
+    def _send_kick_reason(self, reason: str) -> None:
+        if EXTENSION_KICKREASON not in self.proto_extensions:
+            return
+        msg = loaders.ChatMessage()
+        msg.player_id = 255
+        msg.chat_type = CHAT_SYSTEM
+        msg.value = reason[:MAX_CHAT_SIZE]
+        self.send_contained(msg)
+
     def send_chat(self, value: str, global_message: bool = False, custom_type: int = CHAT_ALL) -> None:
         if self.deaf:
             return

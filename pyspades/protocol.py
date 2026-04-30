@@ -37,7 +37,10 @@ class BaseConnection:
         if self.disconnected:
             return
         self.disconnected = True
-        self.peer.disconnect(data)
+        # disconnect_later waits for queued reliable packets to drain before
+        # sending DISCONNECT, so e.g. the kick-reason chat reaches the client
+        # before the disconnect notification fires.
+        self.peer.disconnect_later(data)
         self.protocol.remove_peer(self.peer)
         self.on_disconnect()
 

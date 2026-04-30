@@ -66,7 +66,7 @@ class FeatureConnection(ServerConnection):
                 log.info('banned user {name} ({client_ip}) attempted to join',
                          name=name,
                          client_ip=client_ip)
-                self.disconnect(ERROR_BANNED)
+                self.disconnect(ERROR_BANNED, reason)
                 return
 
         manager = self.protocol.ban_manager
@@ -80,7 +80,7 @@ class FeatureConnection(ServerConnection):
                     client_ip=client_ip,
                     reason=reason
                 )
-                self.disconnect(ERROR_BANNED)
+                self.disconnect(ERROR_BANNED, reason)
                 return
 
         ServerConnection.on_connect(self)
@@ -331,7 +331,7 @@ class FeatureConnection(ServerConnection):
             log.info('{message}', message=message)
         # FIXME: Client should handle disconnect events the same way in both
         # main and initial loading network loops
-        self.disconnect(ERROR_KICKED)
+        self.disconnect(ERROR_KICKED, reason)
 
     def ban(self, reason=None, duration=None):
         reason = ': ' + reason if reason is not None else ''
