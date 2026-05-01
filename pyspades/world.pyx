@@ -176,6 +176,9 @@ cdef class Character(Object):
             self.fall_callback(ret)
         return 0
 
+    def __dealloc__(self):
+        destroy_player(self.player)
+
     # properties
     property up:
         def __get__(self):
