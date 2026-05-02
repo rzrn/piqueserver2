@@ -4,6 +4,7 @@ on:
   release:
     types:
       - published
+  workflow_dispatch:
 
 jobs:
   build_wheels:
@@ -15,7 +16,6 @@ jobs:
     environment: release
     permissions:
       id-token: write
-    if: github.event_name == 'release' && github.event.action == 'published'
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -25,5 +25,4 @@ jobs:
           merge-multiple: true
 
       - uses: pypa/gh-action-pypi-publish@release/v1
-        # with:
-        # To test: repository-url: https://test.pypi.org/legacy/
+        if: github.event_name == 'release' && github.event.action == 'published'
