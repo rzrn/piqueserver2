@@ -24,7 +24,11 @@ from twisted.internet.task import LoopingCall
 from pyspades.constants import GRENADE_DESTROY, SPADE_DESTROY, CTF_MODE, TC_MODE
 from piqueserver.config import config
 
-BK_FREE, BK_FRIENDLY, BK_ENEMY_FAR, BK_ENEMY_NEAR, BK_UNDO = range(5)
+BK_FREE = 0
+BK_FRIENDLY = 1
+BK_ENEMY_FAR = 2
+BK_ENEMY_NEAR = 3
+BK_UNDO = 4
 
 zoc_config = config.section("zoc")
 zoc_radius = zoc_config.option("radius", 32)

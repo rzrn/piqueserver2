@@ -14,7 +14,9 @@ HIDE_POS = (math.inf, math.inf, 128)
 # 'one_ctf' to 'True' or 'reverse_one_ctf' to 'True' in the extensions dictionary. ex:
 # extensions = {'reverse_one_ctf': True}
 
-DISABLED, ONE_CTF, REVERSE_ONE_CTF = range(3)
+DISABLED = 0
+ONE_CTF = 1
+REVERSE_ONE_CTF = 2
 
 ONE_CTF_MODE = REVERSE_ONE_CTF
 

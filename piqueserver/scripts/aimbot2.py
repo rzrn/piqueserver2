@@ -33,7 +33,10 @@ from piqueserver.commands import command, admin, get_player
 from piqueserver.config import config
 from piqueserver.utils import timeparse
 
-DISABLED, KICK, BAN, WARN_ADMIN = range(4)
+DISABLED = 0
+KICK = 1
+BAN = 2
+WARN_ADMIN = 3
 
 # This controls which detection methods are enabled. If a player is detected
 # using one of these methods, the given action is performed
