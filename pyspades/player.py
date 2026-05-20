@@ -642,13 +642,13 @@ class ServerConnection(BaseConnection):
         value: str = contained.value
         value = value.translate(MSG_SPECIAL_CHARACTER_MAP)
 
-        if len(value) > 108:
+        if len(value) > 255:
             log.info("TOO LONG MESSAGE ({chars} chars) FROM {name} (#{id})",
                      chars=len(value),
                      name=self.name,
                      id=self.player_id)
 
-        value = value[:108]
+        value = value[:255]
         if value.startswith('/'):
             self.on_command(*parse_command(value[1:]))
         else:
@@ -712,7 +712,7 @@ class ServerConnection(BaseConnection):
     @register_packet_handler(loaders.VersionResponse)
     def on_version_info_recieved(self, contained: loaders.VersionResponse) -> None:
         self.client_info["version"] = contained.version
-        self.client_info["os_info"] = contained.os_info[:108]
+        self.client_info["os_info"] = contained.os_info[:255]
         # TODO: Make this a dict lookup instead
         if contained.client == 'o':
             self.client_info["client"] = "OpenSpades"
@@ -721,7 +721,7 @@ class ServerConnection(BaseConnection):
             # BetterSpades currently sends the client name in the OS info to
             # deal with old scripts that don't recognize the 'B' indentifier
             match = re.match(r"\ABetterSpades \((.*)\)\Z",
-                             contained.os_info[:108])
+                             contained.os_info[:255])
             if match:
                 self.client_info["os_info"] = match.groups()[0]
         elif contained.client == 'a':
