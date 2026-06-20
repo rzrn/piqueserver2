@@ -82,18 +82,10 @@ def load_scripts(script_names, script_dir, script_type):
         spec.name = 'piqueserver._{}_namespace.{}'.format(script_type, script)
         spec.loader.name = spec.name
         # load module
-        try:
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-            script_objects.append(module)
-            continue
-        except Exception as e: # needs to be broad since we exec the module
-            log.failure(
-                "Error while loading {script_type} {script}: {exception!r}",
-                script_type=script_type,
-                script=script,
-                exception=e
-            )
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        script_objects.append(module)
+        continue
 
     return script_objects
 
