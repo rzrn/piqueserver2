@@ -1044,7 +1044,10 @@ class ServerConnection(BaseConnection):
             self.weapon_object.reset()
         self.weapon_object = WEAPONS[weapon](self._on_reload)
         if not local:
-            change_weapon = loaders.ChangeWeapon()
+            change_weapon           = loaders.ChangeWeapon()
+            change_weapon.player_id = self.player_id
+            change_weapon.weapon    = weapon
+
             self.protocol.broadcast_contained(change_weapon, save=True)
             if not no_kill:
                 self.kill(kill_type=CLASS_CHANGE_KILL)
