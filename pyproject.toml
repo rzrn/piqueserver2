@@ -140,6 +140,7 @@ ssh = [
 
 # development dependencies
 dev = [
+    "Cython",
     "flake8",
     "coveralls",
     "pytest",
