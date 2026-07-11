@@ -1,6 +1,6 @@
 import os
 import unittest
-import enet
+import pyspades.enet as enet
 
 class TestAddress(unittest.TestCase):
     def test_host(self):

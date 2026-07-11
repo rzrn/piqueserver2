@@ -1,4 +1,4 @@
-import enet
+import pyspades.enet as enet
 import random
 import sys
 

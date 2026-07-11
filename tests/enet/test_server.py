@@ -1,4 +1,4 @@
-import enet
+import pyspades.enet as enet
 
 SHUTDOWN_MSG = "SHUTDOWN"
 
