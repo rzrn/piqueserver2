@@ -19,7 +19,7 @@ import asyncio
 from twisted.internet import reactor
 from pyspades.bytes import ByteWriter
 
-import enet
+import pyspades.enet as enet
 
 
 class BaseConnection:

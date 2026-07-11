@@ -7,7 +7,7 @@ import textwrap
 from itertools import product
 from typing import Dict, Optional, Sequence, Tuple, Union
 
-import enet
+import pyspades.enet as enet
 from twisted.internet import reactor
 from twisted.logger import Logger
 

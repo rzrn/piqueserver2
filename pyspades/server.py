@@ -19,7 +19,7 @@ import random
 from typing import List, TypedDict
 import warnings
 from itertools import product
-import enet
+import pyspades.enet as enet
 import time
 import asyncio
 import traceback
