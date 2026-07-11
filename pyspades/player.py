@@ -26,11 +26,12 @@ from pyspades.constants import (BLOCK_TOOL, CTF_MODE, ERROR_FULL,
                                 TC_CAPTURE_DISTANCE, TC_MODE, WEAPON_KILL,
                                 WEAPON_TOOL)
 from pyspades.mapgenerator import ProgressiveMapGenerator
-from pyspades.packet import call_packet_handler, register_packet_handler
+from pyspades.packet import get_packet_handler, register_packet_handler
 from pyspades.protocol import BaseConnection
 from pyspades.team import Team
 from pyspades.weapon import WEAPONS
 from pyspades.types import RateLimiter
+from pyspades.bytes import NoDataLeft
 
 log = Logger()
 
@@ -138,7 +139,21 @@ class ServerConnection(BaseConnection):
         """
         if self.player_id is None:
             return
-        call_packet_handler(self, loader)
+
+        try:
+            contained, handler = get_packet_handler(self, loader)
+        except KeyError:
+            log.warn(
+                "{player!r} sent an invalid packet ID: {packet_id}",
+                player = self, packet_id = loader.data[0]
+            )
+        except NoDataLeft:
+            log.warn(
+                "{player!r} sent a packet that is too short ({size} bytes): {data}",
+                player = self, data = loader.data[:128].hex(' '), size = len(loader.data)
+            )
+        else:
+            handler(self, contained)
 
     @register_packet_handler(loaders.ProtocolExtensionInfo)
     def on_ext_info_received(self, contained: loaders.ProtocolExtensionInfo) -> None:

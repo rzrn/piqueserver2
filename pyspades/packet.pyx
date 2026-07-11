@@ -118,14 +118,6 @@ def register_packet_handler(loader):
         return function
     return register_handler
 
-def call_packet_handler(self, loader):
+def get_packet_handler(self, loader):
     contained = load_client_packet(ByteReader(loader.data))
-    try:
-        handler = _packet_handlers[contained.id]
-    except KeyError:
-        # an invalid ID was sent
-        pass
-    finally:
-        # we call the handler in the finally clause so we don't
-        # accidentally ignore KeyErrors the handler raises
-        handler(self, contained)
+    return contained, _packet_handlers[contained.id]
