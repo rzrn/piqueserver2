@@ -11,7 +11,7 @@ class TestClientServer(unittest.TestCase):
     def test_client_server(self):
         """Run test_server.py and test_client.py as subprocesses."""
         server_proc = subprocess.Popen(
-            [sys.executable, os.path.join(SCRIPT_DIR, "tests/enet/server.py")],
+            [sys.executable, os.path.join(SCRIPT_DIR, "server.py")],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
@@ -22,7 +22,7 @@ class TestClientServer(unittest.TestCase):
 
             # Run client with fixed seed for determinism
             client_result = subprocess.run(
-                [sys.executable, os.path.join(SCRIPT_DIR, "tests/enet/client.py"), "42"],
+                [sys.executable, os.path.join(SCRIPT_DIR, "client.py"), "42"],
                 capture_output=True,
                 text=True,
                 timeout=30,
