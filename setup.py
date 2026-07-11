@@ -1,4 +1,6 @@
 import os
+import sys
+
 from typing import Dict, List, NamedTuple
 from setuptools import setup, Extension, find_packages
 from Cython.Build import cythonize
@@ -10,6 +12,8 @@ class Descriptor(NamedTuple):
     compile_flags: List[str] = []
     link_flags: List[str] = []
     macros: Dict[str, str] = {}
+    language: str = "c++"
+    libraries: List[str] = []
 
 use_static = (os.environ.get('STDCPP_STATIC') == '1')
 use_asan = (os.environ.get('USE_ASAN') == '1')
@@ -37,6 +41,19 @@ if use_linetrace:
     macros['CYTHON_TRACE'] = '1'
     Options.generate_cleanup_code = True
 
+enet_libraries = []
+
+enet_macros = dict(
+    HAS_POLL = None, HAS_FCNTL = None, HAS_MSGHDR_FLAGS = None, HAS_SOCKLEN_T = None
+)
+
+if sys.platform == 'win32':
+    enet_macros.update(WIN32 = None)
+    enet_libraries.extend(['Winmm', 'ws2_32'])
+
+if sys.platform != 'darwin':
+    enet_macros.update(HAS_GETHOSTBYNAME_R = None, HAS_GETHOSTBYADDR_R = None)
+
 extension_descriptors = [
     Descriptor('pyspades.world',
                sources=['pyspades/world.pyx'],
@@ -63,6 +80,14 @@ extension_descriptors = [
 
     Descriptor('pyspades.vxl',
                sources=['pyspades/vxl.pyx']),
+
+    Descriptor('pyspades.enet',
+               language='c',
+               libraries=enet_libraries,
+               macros=enet_macros,
+               sources=['pyspades/enet.pyx', 'enet/callbacks.c', 'enet/compress.c',
+                        'enet/host.c', 'enet/list.c', 'enet/packet.c', 'enet/peer.c',
+                        'enet/protocol.c', 'enet/unix.c', 'enet/win32.c']),
 ]
 
 extensions: List[Extension] = []
@@ -70,8 +95,9 @@ for descriptor in extension_descriptors:
     extension = Extension(
         name=descriptor.extension_name,
         sources=descriptor.sources,
-        language='c++',
-        include_dirs=['pyspades/'],
+        language=descriptor.language,
+        libraries=descriptor.libraries,
+        include_dirs=['enet/include', 'pyspades/'],
         define_macros=list({**macros, **descriptor.macros}.items()),
         extra_link_args=[*link_flags, *descriptor.link_flags],
         extra_compile_args=[*compile_flags, *descriptor.compile_flags],
