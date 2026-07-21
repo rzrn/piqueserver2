@@ -22,26 +22,40 @@ packets.
 """
 from libc.math cimport NAN
 
+from libc.stdint cimport int8_t, int16_t, int32_t, uint8_t, uint16_t, uint32_t
+
 cdef extern from "bytes_c.cpp":
-    char read_byte(char * data)
-    unsigned char read_ubyte(char * data)
-    short read_short(char * data, int big_endian)
-    unsigned short read_ushort(char * data, int big_endian)
-    int read_int(char * data, int big_endian)
-    unsigned int read_uint(char * data, int big_endian)
-    double read_float(char * data, int big_endian)
+    int8_t read_i8le(const char * data)
+    uint8_t read_u8le(const char * data)
+
+    int16_t read_i16le(const char * data)
+    uint16_t read_u16le(const char * data)
+
+    int32_t read_i32le(const char * data)
+    uint32_t read_u32le(const char * data)
+
+    double read_f32le(const char *)
+
+    char read_c8le(const char * data)
     char * read_string(char * data)
 
     stringstream * create_stream()
     void delete_stream(stringstream * stream)
-    void write_byte(stringstream * stream, char value)
-    void write_ubyte(stringstream * stream, unsigned char value)
-    void write_short(stringstream * stream, short value, int big_endian)
-    void write_ushort(stringstream * stream, unsigned short value, int big_endian)
-    void write_int(stringstream * stream, int value, int big_endian)
-    void write_uint(stringstream * stream, unsigned int value, int big_endian)
-    void write_float(stringstream * stream, double value, int big_endian)
+
+    void write_i8le(stringstream * ss, int8_t value)
+    void write_u8le(stringstream * ss, uint8_t value)
+
+    void write_i16le(stringstream * ss, int16_t value)
+    void write_u16le(stringstream * ss, uint16_t value)
+
+    void write_i32le(stringstream * ss, int32_t value)
+    void write_u32le(stringstream * ss, uint32_t value)
+
+    void write_f32le(stringstream * ss, double value)
+
+    void write_c8le(stringstream * ss, char value)
     void write_string(stringstream * stream, char * data, size_t size)
+
     void write(stringstream * stream, char * data, size_t size)
     void rewind_stream(stringstream * stream, int bytecount)
     object get_stream(stringstream * stream)
@@ -94,66 +108,85 @@ cdef class ByteReader:
         self.pos += bytecount
         return ret
 
-    cpdef int readByte(self, bint unsigned = False) except INT_ERROR:
-        """read one byte of data as integer
-
-        Arguments:
-            unsigned (bool): If true, interpret the byte as unsigned
+    cpdef int readInt8LE(self) except INT_ERROR:
+        """read one byte of data as signed integer
 
         Returns:
             int: The value of the byte as int
         """
+
         cdef char * pos = self.check_available(1)
-        if unsigned:
-            return read_ubyte(pos)
-        else:
-            return read_byte(pos)
+        return read_i8le(pos)
 
-    cpdef int readShort(self, bint unsigned = False, bint big_endian = True) \
-                        except INT_ERROR:
-        """read two bytes of data as integer
+    cpdef int readUInt8LE(self) except INT_ERROR:
+        """read one byte of data as unsigned integer
 
-        Arguments:
-            unsigned (bool): If true, interpret the bytes as unsigned
-            big_endian (bool, optional): If true, interpret the bytes as big endian
+        Returns:
+            int: The value of the byte as int
+        """
+
+        cdef char * pos = self.check_available(1)
+        return read_u8le(pos)
+
+    cpdef int readInt16LE(self) except INT_ERROR:
+        """read two bytes of data as signed little-endian integer
 
         Returns:
             int: The value of the bytes as int
         """
+
         cdef char * pos = self.check_available(2)
-        if unsigned:
-            return read_ushort(pos, big_endian)
-        else:
-            return read_short(pos, big_endian)
+        return read_i16le(pos)
 
-    cpdef long long readInt(self, bint unsigned = False,
-                            bint big_endian = True) except LONG_LONG_ERROR:
-        """read four bytes of data as integer
-
-        Arguments:
-            unsigned (bool): If true, interpret the bytes as unsigned
-            big_endian (bool, optional): If true, interpret the bytes as big endian
+    cpdef int readUInt16LE(self) except INT_ERROR:
+        """read two bytes of data as unsigned little-endian integer
 
         Returns:
             int: The value of the bytes as int
         """
+
+        cdef char * pos = self.check_available(2)
+        return read_u16le(pos)
+
+    cpdef long long readInt32LE(self) except LONG_LONG_ERROR:
+        """read four bytes of data as signed little-endian integer
+
+        Returns:
+            int: The value of the bytes as int
+        """
+
         cdef char * pos = self.check_available(4)
-        if unsigned:
-            return read_uint(pos, big_endian)
-        else:
-            return read_int(pos, big_endian)
+        return read_i32le(pos)
 
-    cpdef float readFloat(self, bint big_endian = True) except? NAN:
-        """read four bytes of data as floating point number
+    cpdef long long readUInt32LE(self) except LONG_LONG_ERROR:
+        """read four bytes of data as unsigned little-endian integer
 
-        Arguments:
-            big_endian (bool, optional): If true, interpret the bytes as big endian
+        Returns:
+            int: The value of the bytes as int
+        """
+
+        cdef char * pos = self.check_available(4)
+        return read_u32le(pos)
+
+    cpdef float readFloat32LE(self) except? NAN:
+        """read four bytes of data as little-endian floating point number
 
         Returns:
             float: The value of the bytes as float
         """
+
         cdef char * pos = self.check_available(4)
-        return read_float(pos, big_endian)
+        return read_f32le(pos)
+
+    cpdef int readChar(self):
+        """read one byte of data as character
+
+        Returns:
+            bytes: The value of the byte as character
+        """
+
+        cdef char * pos = self.check_available(1)
+        return read_c8le(pos)
 
     cpdef bytes readString(self, int size = -1):
         """read a string
@@ -247,41 +280,42 @@ cdef class ByteWriter:
     cpdef write(self, data):
         write(self.stream, data, len(data))
 
-    cpdef writeByte(self, int value, bint unsigned = False):
-        if unsigned:
-            write_ubyte(self.stream, value)
-        else:
-            write_byte(self.stream, value)
+    cpdef writeInt8LE(self, int value):
+        write_i8le(self.stream, value)
 
-    cpdef writeShort(self, int value, bint unsigned = False,
-                     bint big_endian = True):
-        if unsigned:
-            write_ushort(self.stream, value, big_endian)
-        else:
-            write_short(self.stream, value, big_endian)
+    cpdef writeUInt8LE(self, int value):
+        write_u8le(self.stream, value)
 
-    cpdef writeInt(self, long long value, bint unsigned = False,
-                   bint big_endian = True):
-        if unsigned:
-            write_uint(self.stream, value, big_endian)
-        else:
-            write_int(self.stream, value, big_endian)
+    cpdef writeInt16LE(self, int value):
+        write_i16le(self.stream, value)
 
-    cpdef writeFloat(self, float value, bint big_endian = True):
-        write_float(self.stream, value, big_endian)
+    cpdef writeUInt16LE(self, int value):
+        write_u16le(self.stream, value)
 
-    cpdef writeStringSize(self, char * value, int size):
-        write_string(self.stream, value, size)
+    cpdef writeInt32LE(self, int value):
+        write_i32le(self.stream, value)
+
+    cpdef writeUInt32LE(self, int value):
+        write_u32le(self.stream, value)
+
+    cpdef writeFloat32LE(self, float value):
+        write_f32le(self.stream, value)
+
+    cpdef writeChar(self, value):
+        write_c8le(self.stream, value)
 
     cpdef writeString(self, value, int size = -1):
         write_string(self.stream, value, len(value))
         if size != -1:
             self.pad(size - (len(value) + 1))
 
+    cpdef writeStringSize(self, char * value, int size):
+        write_string(self.stream, value, size)
+
     cpdef pad(self, int bytecount):
         cdef int i
         for i in range(bytecount):
-            write_ubyte(self.stream, 0)
+            write_u8le(self.stream, 0)
 
     cpdef rewind(self, int bytecount):
         rewind_stream(self.stream, bytecount)

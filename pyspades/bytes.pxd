@@ -16,13 +16,21 @@ cdef class ByteReader:
 
     cdef char * check_available(self, int size) except NULL
     cpdef read(self, int bytecount = ?)
-    cpdef int readByte(self, bint unsigned = ?) except INT_ERROR
-    cpdef int readShort(self, bint unsigned = ?, bint big_endian = ?) \
-                        except INT_ERROR
-    cpdef long long readInt(self, bint unsigned = ?, bint big_endian = ?) \
-                            except LONG_LONG_ERROR
-    cpdef float readFloat(self, bint big_endian = ?) except? NAN
+
+    cpdef int readInt8LE(self) except INT_ERROR
+    cpdef int readUInt8LE(self) except INT_ERROR
+
+    cpdef int readInt16LE(self) except INT_ERROR
+    cpdef int readUInt16LE(self) except INT_ERROR
+
+    cpdef long long readInt32LE(self) except LONG_LONG_ERROR
+    cpdef long long readUInt32LE(self) except LONG_LONG_ERROR
+
+    cpdef float readFloat32LE(self) except? NAN
+
+    cpdef int readChar(self)
     cpdef bytes readString(self, int size = ?)
+
     cpdef ByteReader readReader(self, int size = ?)
     cpdef int dataLeft(self)
     cdef void _skip(self, int bytecount)
@@ -36,14 +44,22 @@ cdef class ByteWriter:
 
     cdef void writeSize(self, char * data, int size)
     cpdef write(self, data)
-    cpdef writeByte(self, int value, bint unsigned = ?)
-    cpdef writeShort(self, int value, bint unsigned = ?,
-                     bint big_endian = ?)
-    cpdef writeInt(self, long long value, bint unsigned = ?,
-                   bint big_endian = ?)
-    cpdef writeFloat(self, float value, bint big_endian = ?)
-    cpdef writeStringSize(self, char * value, int size)
+
+    cpdef writeInt8LE(self, int value)
+    cpdef writeUInt8LE(self, int value)
+
+    cpdef writeInt16LE(self, int value)
+    cpdef writeUInt16LE(self, int value)
+
+    cpdef writeInt32LE(self, int value)
+    cpdef writeUInt32LE(self, int value)
+
+    cpdef writeFloat32LE(self, float value)
+
+    cpdef writeChar(self, value)
     cpdef writeString(self, value, int size = ?)
+    cpdef writeStringSize(self, char * value, int size)
+
     cpdef pad(self, int bytecount)
     cpdef rewind(self, int bytecount)
     cpdef size_t tell(self)

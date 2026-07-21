@@ -52,23 +52,23 @@ class AddServer(Loader):
 
     def read(self, reader):
         if reader.dataLeft() == 1:
-            self.count = reader.readByte(True)
+            self.count = reader.readUInt8LE()
         else:
-            self.max_players = reader.readByte(True)
-            self.port = reader.readShort(True, False)
+            self.max_players = reader.readUInt8LE()
+            self.port = reader.readUInt16LE()
             self.name = reader.readString()
             self.game_mode = reader.readString()
             self.map = reader.readString()
 
     def write(self, writer):
         if self.count is None:
-            writer.writeByte(self.max_players)
-            writer.writeShort(self.port, True, False)
+            writer.writeUInt8LE(self.max_players)
+            writer.writeUint16LE(self.port)
             writer.writeString(self.name)
             writer.writeString(self.game_mode)
             writer.writeString(self.map)
         else:
-            writer.writeByte(self.count, True)
+            writer.writeUInt8LE(self.count)
 
 
 add_server = AddServer()
