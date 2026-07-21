@@ -63,7 +63,7 @@ class AddServer(Loader):
     def write(self, writer):
         if self.count is None:
             writer.writeUInt8LE(self.max_players)
-            writer.writeUint16LE(self.port)
+            writer.writeUInt16LE(self.port)
             writer.writeString(self.name)
             writer.writeString(self.game_mode)
             writer.writeString(self.map)
