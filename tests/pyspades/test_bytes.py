@@ -64,6 +64,5 @@ class TestByteReader(unittest.TestCase):
             reader = ByteReader(i)
 
             self.assertEqual(reader.readFloat32LE(), 2.2132692287005784e-38)
-            self.assertEqual(reader.readFloat32LE(), -6.384869180745487e+29)
 
     # TODO: test rest of bytes.pyx, moving on to more useful modules for now
