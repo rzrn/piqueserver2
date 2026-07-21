@@ -29,8 +29,8 @@ class TestByteReader(unittest.TestCase):
         for i in inputs:
             reader = ByteReader(i)
 
-            self.assertEqual(reader.readByte(False), -15)
-            self.assertEqual(reader.readByte(True), 241)
+            self.assertEqual(reader.readInt8LE(), -15)
+            self.assertEqual(reader.readUInt8LE(), 241)
 
     def test_readshort(self):
         inputs = (
@@ -40,14 +40,8 @@ class TestByteReader(unittest.TestCase):
         )
         for i in inputs:
             reader = ByteReader(i)
-
-            self.assertEqual(reader.readShort(False), -3840)
-            self.assertEqual(reader.readShort(True), 61696)
-
-            # Small endian
-            reader = ByteReader(i)
-            self.assertEqual(reader.readShort(False, False), 241)
-            self.assertEqual(reader.readShort(True, False), 241)
+            self.assertEqual(reader.readInt16LE(), 241)
+            self.assertEqual(reader.readUInt16LE(), 241)
 
     def test_readint(self):
         inputs = (
@@ -57,14 +51,8 @@ class TestByteReader(unittest.TestCase):
         )
         for i in inputs:
             reader = ByteReader(i)
-
-            self.assertEqual(reader.readInt(False), -251596544)
-            self.assertEqual(reader.readInt(True), 4043370752)
-
-            # Small endian
-            reader = ByteReader(i)
-            self.assertEqual(reader.readInt(False, False), 15794417)
-            self.assertEqual(reader.readInt(True, False), 15794417)
+            self.assertEqual(reader.readInt32LE(), 15794417)
+            self.assertEqual(reader.readUInt32LE(), 15794417)
 
     def test_readfloat(self):
         inputs = (
@@ -75,7 +63,7 @@ class TestByteReader(unittest.TestCase):
         for i in inputs:
             reader = ByteReader(i)
 
-            self.assertEqual(reader.readFloat(False), 2.2132692287005784e-38)
-            self.assertEqual(reader.readFloat(True), -6.384869180745487e+29)
+            self.assertEqual(reader.readFloat32LE(), 2.2132692287005784e-38)
+            self.assertEqual(reader.readFloat32LE(), -6.384869180745487e+29)
 
     # TODO: test rest of bytes.pyx, moving on to more useful modules for now
