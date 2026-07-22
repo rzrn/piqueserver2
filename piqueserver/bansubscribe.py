@@ -21,12 +21,13 @@ from itertools import chain
 from typing import List
 
 import aiohttp
-from twisted.logger import Logger
+
+from pyspades.logger import getLogger
 
 from piqueserver.config import cast_duration, config
 from piqueserver.networkdict import NetworkDict
 
-log = Logger()
+log = getLogger()
 
 # format is [{"ip" : "1.1.1.1", "reason : "blah"}, ...]
 

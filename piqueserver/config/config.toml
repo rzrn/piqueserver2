@@ -253,8 +253,8 @@ guard = [
 
 [logging]
 # set log level
-# various log levels in decending order: debug, info, warn, error, critical
-loglevel = "info"
+# various log levels in decending order: DEBUG, INFO, WARN, ERROR, CRITICAL
+loglevel = "INFO"
 
 # the logfile to log to if logging enabled
 # relative paths are resolved relative to the config directory; parent

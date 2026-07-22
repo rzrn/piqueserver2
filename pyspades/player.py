@@ -9,7 +9,6 @@ from typing import Dict, Optional, Sequence, Tuple, Union
 
 import pyspades.enet as enet
 from twisted.internet import reactor
-from twisted.logger import Logger
 
 from pyspades import contained as loaders
 from pyspades import world
@@ -33,7 +32,9 @@ from pyspades.weapon import WEAPONS
 from pyspades.types import RateLimiter
 from pyspades.bytes import NoDataLeft
 
-log = Logger()
+from pyspades.logger import getLogger
+
+log = getLogger()
 
 
 tc_data = loaders.TCState()

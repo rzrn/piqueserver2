@@ -27,7 +27,7 @@ import time
 from PIL import Image
 from io import BytesIO
 from aiohttp.abc import AbstractAccessLogger
-from twisted.logger import Logger
+from pyspades.logger import getLogger
 from piqueserver.utils import as_deferred
 
 from piqueserver.config import config, cast_duration
@@ -155,7 +155,7 @@ class StatusServer:
         """Starts the status server on configured host/port"""
         app = self.create_app()
         if logging_option.get():
-            runner = web.AppRunner(app, access_log=Logger(), access_log_class=AccessLogger)
+            runner = web.AppRunner(app, access_log=getLogger(), access_log_class=AccessLogger)
         else:
             runner = web.AppRunner(app)
         await as_deferred(runner.setup())

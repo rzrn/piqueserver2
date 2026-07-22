@@ -3,7 +3,6 @@ import time
 from typing import List, Tuple, Optional, Union
 
 from twisted.internet import reactor
-from twisted.logger import Logger
 
 from piqueserver import commands
 from piqueserver.release import format_release
@@ -12,6 +11,7 @@ from pyspades.constants import (ERROR_BANNED, DESTROY_BLOCK, SPADE_DESTROY,
 from pyspades.server import ServerConnection
 from pyspades.common import escape_control_codes, prettify_timespan
 from pyspades.types import AttributeSet, RateLimiter
+from pyspades.logger import getLogger
 
 # TODO: move these where they belong
 from pyspades.team import Team
@@ -21,7 +21,7 @@ CHAT_PER_SECOND = 0.5
 
 HookValue = Optional[bool]
 
-log = Logger()
+log = getLogger()
 
 
 class FeatureConnection(ServerConnection):

@@ -20,7 +20,7 @@ Options
 
 import os
 from twisted.internet import reactor
-from twisted.logger  import Logger
+from pyspades.logger import getLogger
 from piqueserver.config import config
 from piqueserver.commands import command
 from piqueserver.map import RotationInfo
@@ -28,7 +28,7 @@ from piqueserver.map import RotationInfo
 
 savemap_config = config.section('savemap')
 config_dir = config.config_dir
-log = Logger()
+log = getLogger()
 
 
 @command('savemap', admin_only=True)

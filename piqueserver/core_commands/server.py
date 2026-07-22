@@ -1,11 +1,11 @@
 import random
 import sys
 
-from twisted.logger import Logger
+from pyspades.logger import getLogger
 
 from piqueserver.commands import command, join_arguments
 
-log = Logger()
+log = getLogger()
 
 
 @command('servername', admin_only=True)

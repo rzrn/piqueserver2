@@ -26,16 +26,15 @@ import textwrap
 import functools
 from typing import Dict, List, Callable
 
-from twisted.logger import Logger
-
 from pyspades.common import escape_control_codes
 from pyspades.player import parse_command
+from pyspades.logger import getLogger
 
 _commands = {}
 _alias_map = {}
 _rights = {}  # type: Dict[str, List[str]]
 
-log = Logger()
+log = getLogger()
 
 class CommandError(Exception):
     pass

@@ -3,9 +3,9 @@ import os
 import importlib.util
 import importlib.machinery
 
-from twisted.logger import Logger
+from pyspades.logger import getLogger
 
-log = Logger()
+log = getLogger()
 
 
 def check_scripts(script_names):

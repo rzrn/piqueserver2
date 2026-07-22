@@ -23,11 +23,11 @@ from typing import List
 
 from twisted.words.protocols import irc
 from twisted.internet import reactor, protocol
-from twisted.logger import Logger
 
 from pyspades.constants import MAX_CHAT_SIZE
 from pyspades.common import encode, escape_control_codes
 from pyspades.types import AttributeSet
+from pyspades.logger import getLogger
 from piqueserver import commands
 from piqueserver.commands import command, restrict
 
@@ -39,7 +39,7 @@ SPLIT_THRESHOLD = 20  # players
 
 irc_color_codes = re.compile(r"\x03(?:\d{1,2}(?:,\d{1,2})?)?", re.UNICODE)
 
-log = Logger()
+log = getLogger()
 
 def channel(func):
     """This decorator rewrites the username of incoming messages to strip the

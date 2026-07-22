@@ -22,12 +22,12 @@ import random
 import time
 from typing import List, Optional, Union
 
-from twisted.logger import Logger
+from pyspades.logger import getLogger
 
 from pyspades.vxl import VXLData
 from piqueserver.config import config
 
-log = Logger()
+log = getLogger()
 
 
 class MapNotFound(Exception):

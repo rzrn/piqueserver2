@@ -25,10 +25,11 @@ import socket
 from typing import TYPE_CHECKING, Any, Callable, List, TypedDict
 
 from twisted.internet import reactor
-from twisted.logger import Logger
 from pyspades.loaders import Loader
 from pyspades.protocol import BaseConnection
 from pyspades.constants import MASTER_VERSION
+
+from pyspades.logger import getLogger
 
 if TYPE_CHECKING:
     from pyspades.server import ServerProtocol
@@ -37,7 +38,7 @@ MAX_SERVER_NAME_SIZE = 31
 MAX_MAP_NAME_SIZE = 20
 MAX_GAME_MODE_SIZE = 7
 
-log = Logger()
+log = getLogger()
 
 @dataclass
 class MasterHostDescriptor:

@@ -39,9 +39,10 @@ from pyspades.bytes import ByteWriter
 from pyspades import contained as loaders
 from pyspades.common import make_color
 from pyspades.mapgenerator import ProgressiveMapGenerator
-from twisted.logger import Logger
 
-log = Logger()
+from pyspades.logger import getLogger
+
+log = getLogger()
 
 NICKNAME_SPECIAL_CHARS = str.maketrans({
     '%': '',

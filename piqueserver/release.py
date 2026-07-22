@@ -1,12 +1,14 @@
 from datetime import datetime
 from typing import Optional, Dict, Any
-from twisted.logger import Logger
+
 import aiohttp
 from packaging import version
+
+from pyspades.logger import getLogger
 from piqueserver.version import __version__
 
 
-log = Logger()
+log = getLogger()
 
 
 async def fetch_latest_release() -> Dict[str, Any]:

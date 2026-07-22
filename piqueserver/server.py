@@ -38,10 +38,9 @@ from twisted.internet import reactor, threads
 from twisted.internet.defer import Deferred, ensureDeferred
 from twisted.internet.task import LoopingCall, coiterate, deferLater
 from twisted.internet.tcp import Port
-from twisted.logger import (FilteringLogObserver, Logger, LogLevel,
-                            LogLevelFilterPredicate, globalLogBeginner,
-                            textFileLogObserver)
-from twisted.python.logfile import DailyLogFile
+
+from logging import FileHandler, StreamHandler, getLevelName
+from logging.handlers import TimedRotatingFileHandler
 
 # won't be used; just need to be executed
 import piqueserver.core_commands  # pylint: disable=unused-import
@@ -63,7 +62,9 @@ from pyspades.server import ServerProtocol, Team
 from pyspades.tools import make_server_identifier
 from pyspades.vxl import VXLData
 
-log = Logger()
+from pyspades.logger import getLogger
+
+log = getLogger()
 
 def validate_team_name(name):
     if len(name) > 9:
@@ -96,7 +97,7 @@ game_mode = config.option('game_mode', default='ctf')
 random_rotation = config.option('random_rotation', default=False)
 passwords = config.option('passwords', default={})
 logfile = logging_config.option('logfile', default='./logs/log.txt')
-loglevel = logging_config.option('loglevel', default='info')
+loglevel = logging_config.option('loglevel', default='INFO')
 map_rotation = config.option('rotation', default=['classicgen', 'random'],
                              validate=lambda x: isinstance(x, list))
 default_time_limit = config.option(
@@ -250,19 +251,29 @@ class FeatureProtocol(ServerProtocol):
             if not os.path.isabs(log_filename):
                 log_filename = os.path.join(config.config_dir, log_filename)
             ensure_dir_exists(log_filename)
+
+            stream_handler = StreamHandler(sys.stdout)
+
             if logging_rotate_daily.get():
-                logging_file = DailyLogFile(log_filename, '.')
+                file_handler = TimedRotatingFileHandler(filename = log_filename, when = "midnight", interval = 1)
             else:
-                logging_file = open(log_filename, 'a')
-            predicate = LogLevelFilterPredicate(
-                LogLevel.levelWithName(loglevel.get()))
-            observers = [
-                FilteringLogObserver(
-                    textFileLogObserver(sys.stderr), [predicate]),
-                FilteringLogObserver(
-                    textFileLogObserver(logging_file), [predicate])
-            ]
+                file_handler = FileHandler(log_filename)
+
+            import logging
+
+            logging.basicConfig(
+                level    = getLevelName(loglevel.get()),
+                style    = "{",
+                format   = "{asctime} [{name}#{levelname}] {message}",
+                datefmt  = "%Y-%m-%dT%H:%M:%S%z",
+                handlers = [stream_handler, file_handler]
+            )
+
+            from twisted.logger import globalLogBeginner, STDLibLogObserver
+
+            observers = [STDLibLogObserver()]
             globalLogBeginner.beginLoggingTo(observers)
+
             log.info('piqueserver started on {time}', time=time.strftime('%c'))
 
         self.config = config_dict
