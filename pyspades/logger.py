@@ -18,8 +18,13 @@ import logging
 
 class FormatLogger(logging.Logger):
     def _log(self, level, msg, w, exc_info = None, extra = None, stack_info = False, stacklevel = 1, **kw):
+        if isinstance(msg, str):
+            strval = msg.format(*w, **kw)
+        else:
+            strval = str(msg)
+
         super()._log(
-            level, str(msg).format(*w, **kw), (),
+            level, strval, (),
             exc_info = exc_info, extra = extra, stack_info = stack_info, stacklevel = stacklevel + 1
         )
 
