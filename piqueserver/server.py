@@ -68,7 +68,7 @@ log = getLogger()
 
 def validate_team_name(name):
     if len(name) > 9:
-        log.warn(
+        log.warning(
             "Team name's length exceeds 9 character limit. More info: https://git.io/fN2cI")
         # TODO: Once issue #345 is sorted out, we can do a proper validation
         # for now we just warn
@@ -312,7 +312,7 @@ class FeatureProtocol(ServerProtocol):
         self.hard_bans = set()  # possible DDoS'ers are added here
         self.player_memory = deque(maxlen=100)
         if len(self.name) > MAX_SERVER_NAME_SIZE:
-            log.warn(
+            log.warning(
                 '(server name too long; it will be truncated to "{name}")',
                 name=self.name[:MAX_SERVER_NAME_SIZE]
             )
@@ -457,11 +457,11 @@ class FeatureProtocol(ServerProtocol):
                     ip = await response.text()
                     ip = IPv4Address(ip.strip())
         except AddressValueError as e:
-            log.warn('External IP getter service returned invalid data.\n'
-                     'Please check the "ip_getter" setting in your config.')
+            log.warning('External IP getter service returned invalid data.\n'
+                        'Please check the "ip_getter" setting in your config.')
             return
         except Exception as e:  # pylint: disable=broad-except
-            log.warn("Getting external IP failed: {reason}", reason=e)
+            log.warning("Getting external IP failed: {reason}", reason=e)
             return
 
         self.ip = ip
@@ -830,10 +830,10 @@ class FeatureProtocol(ServerProtocol):
             return
         dt = reactor.seconds() - current_time
         if dt > 1.0:
-            log.warn('processing {data!r} from {ip} took {time}',
-                     data=packet.data,
-                     ip=ip,
-                     time=dt)
+            log.warning('processing {data!r} from {ip} took {time}',
+                        data=packet.data,
+                        ip=ip,
+                        time=dt)
 
     def irc_say(self, msg: str, me: bool = False) -> None:
         if self.irc_relay:
@@ -873,12 +873,12 @@ class FeatureProtocol(ServerProtocol):
         if last_time is not None:
             dt = current_time - last_time
             if dt > 1.0:
-                log.warn('high CPU usage detected - {dt}', dt=dt)
+                log.warning('high CPU usage detected - {dt}', dt=dt)
         self.last_time = current_time
         ServerProtocol.update_world(self)
         time_taken = reactor.seconds() - current_time
         if time_taken > 1.0:
-            log.warn(
+            log.warning(
                 'World update iteration took {time}, objects: {objects!r}',
                 time=time_taken,
                 objects=self.world.objects
@@ -896,7 +896,7 @@ class FeatureProtocol(ServerProtocol):
             map_on_map_change(self, the_map)
 
         if not all(the_map.get_solid(x, y, 63) for x, y in itertools.product(range(512), repeat = 2)):
-            log.warn('The map may not work in old versions of OpenSpades')
+            log.warning('The map may not work in old versions of OpenSpades')
 
     def on_map_leave(self):
         map_on_map_leave = self.map_info.on_map_leave
@@ -982,7 +982,7 @@ def run() -> None:
     log.debug('Checking for unregistered config items...')
     unused = config.check_unused()
     if unused:
-        log.warn('The following config items are not used:')
+        log.warning('The following config items are not used:')
         pprint(unused)
 
     log.info('Started server...')

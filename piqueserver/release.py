@@ -33,7 +33,7 @@ async def check_for_releases() -> Optional[Dict[str, Any]]:
     try:
         release = await fetch_latest_release()
     except IOError as e:
-        log.warn("could not fetch latest version: {err}", err=e)
+        log.warning("could not fetch latest version: {err}", err=e)
         return None
 
     latest_version = release["tag_name"]

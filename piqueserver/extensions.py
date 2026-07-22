@@ -27,7 +27,7 @@ def check_scripts(script_names):
         else:
             seen.add(script)
     if dups:
-        log.warn("Scripts included multiple times: {dups}", dups=dups)
+        log.warning("Scripts included multiple times: {dups}", dups=dups)
         return False
     return True
 

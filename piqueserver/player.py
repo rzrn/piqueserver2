@@ -389,9 +389,9 @@ class FeatureConnection(ServerConnection):
         self.current_send_lines_types.remove(type)
 
     def on_hack_attempt(self, reason):
-        log.warn('Hack attempt detected from {name}: {reason}',
-                 name=self.printable_name,
-                 reason=reason)
+        log.warning('Hack attempt detected from {name}: {reason}',
+                    name=self.printable_name,
+                    reason=reason)
         self.kick(reason)
 
     def on_user_login(self, user_type, verbose=True):
